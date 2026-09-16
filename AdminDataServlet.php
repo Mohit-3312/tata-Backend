@@ -14,11 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit();
 }
+// 🔒 Security Check
 $headers = getallheaders();
-$adminKey = $headers['X-Admin-Key'] ?? $headers['x-admin-key'] ?? '';
+$providedKey = $headers['X-Admin-Key'] ?? $headers['x-admin-key'] ?? '';
 $expectedKey = getenv('ADMIN_SECRET');
 
-if ($adminKey !== $expectedKey) {
+if (!$expectedKey || $providedKey !== $expectedKey) {
     http_response_code(401);
     echo json_encode(["status" => "error", "message" => "Unauthorized access."]);
     exit();
